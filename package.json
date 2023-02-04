@@ -1,0 +1,30 @@
+{
+  "name": "namste_react_start",
+  "version": "1.0.0",
+  "description": "react_startup",
+  "main": "App.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderam95/NAMSTE_REACT_START.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Hariram",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coderam95/NAMSTE_REACT_START/issues"
+  },
+  "homepage": "https://github.com/coderam95/NAMSTE_REACT_START#readme",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.8.3",
+    "process": "^0.11.10"
+  }
+}
