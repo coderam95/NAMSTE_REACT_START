@@ -1,0 +1,79 @@
+function fetchJSON (url, body, acceptedResponseStatusCodes, extraOptions = {} ){
+const contentType = 'application/json';
+const options = body ? 
+{
+method: 'POST',
+credentials : 'include',
+headers: new HEADERS({'content-type': contentType}),
+body: JSON.stringify(body),
+...extraOptions
+}: {
+method: 'GET',
+credentials: 'include',
+...extraOptions
+};
+const responseCodes = {
+'responseStatus': null,
+'responseContentType': null
+};
+
+const getResponseHeader = (response, contentTypeVal) => {
+const responseContentType = response.headers.get('content-type');
+const requestCorrelation = response.headers.get('x-hsbc-request-correlation-id') || null ;
+const sessionCorrelation = response.headers.get('x-hsbc-session-correlation-id') || null;
+const csrf = response.headers.get('x-hsbc-request-csrf') || {};
+const requestTrust = response.headers.get('x-hsbc-request-trust') || {};
+const checkContentType = !responseContentType || responseContentType.indexOf(contentTypeVal) < 0;
+return [responseContentType, requestCorrelation, sessionCorrelation, csrf, requestTrust, checkContentType];
+};
+const handleError = (err, responseCodeVal) => {
+if(typeof err !== 'object') {
+throw {
+responseStatus : responseCodeVal['responseStatus'],
+contentType: responseCodeVal['responseContentType'],
+err
+};
+}
+err['responseStatus'] = responseCodeVal['responseStatus'];
+throw err;
+};
+return fetch(url, options)
+.then(response => {
+const responseStatus = response.status;
+const { responseContentType, requestCorrelation, sessionCorrelation, csrf, requestTrust, checkContentType } = getResponseHeader(response, contentType);
+responseCodes['responseStatus'] = responseStatus;
+responseCodes['responseContentType] = responseContentType;
+if(checkContentType) {
+return response.text()
+.then(text => {
+const responseObj = {
+status: -1,
+responseStatus: responseStatus,
+text,
+csrf,
+requestTrust,
+isResponseOk: response.ok
+};
+checkErrorResponse(responseObj, acceptedResponseStatusCodes);
+return responseObj;
+});
+}
+return response.json()
+.then(json => {
+const responseObj = {
+status: responseStatus,
+json,
+requestCorrelation,
+sessionCorrelation,
+csrf,
+requestTrust
+};
+checkErrorResponse(responseObj, acceptedResponseStatusCodes);
+return responseObj;
+});
+})
+.catch((err) => {
+handleError(err, responseCodes);
+});
+}
+convert above code to axios api call instead of fetch

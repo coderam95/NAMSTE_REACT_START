@@ -1,0 +1,21 @@
+export default async function loadServerData () {
+const url = ROOT_URL+ '/server-data';
+try{
+const response = await trustedFetchJSON(url);
+return window.setServerData(response.json);
+}
+catch (error){
+console.error('SERVER LOAD ERROR', error);
+errorHandler(error, createBrowserHiistory());
+return window.setServerData({});
+}
+}
+
+
+const trustedFetch = createAsyncThunk({url, body, csrf, requestTrust, additionalHeaders = {}, acceptedResponseStatusCodes = [200, 204]})=>{
+
+const headersWithCsrf = "hello";
+return fetchJSON (url, body, acceptedResponseStatusCode, headersWithCsrf);
+})
+
+call the trustedFetch createAsync Function in loadServerData() in place of trustedFetchJSON();
